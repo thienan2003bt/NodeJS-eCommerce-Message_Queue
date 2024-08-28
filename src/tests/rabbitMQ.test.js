@@ -9,10 +9,3 @@ describe('RabbitMQ Connection Test', () => {
     })
 
 })
-
-
-
-class RabbitMQTest {
-    static async testConnection() {
-    }
-}

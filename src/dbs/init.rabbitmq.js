@@ -32,6 +32,19 @@ class RabbitMQDatabase {
 
         }
     }
+
+    static async consumeQueue(channel, queueName) {
+        try {
+            await channel.assertQueue(queueName, { durable: true });
+            console.log("Waiting for incoming messages ...");
+
+            channel.consume(queueName, (message) => {
+                console.log(`Received messages from ${queueName}: ${message.content.toString()}`);
+            }, { noAck: true })
+        } catch (error) {
+            console.error("Error consuming queue of RabbitMQ: " + error.message);
+        }
+    }
 }
 
 
