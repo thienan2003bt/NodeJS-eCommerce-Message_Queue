@@ -27,13 +27,30 @@ class ConsumerQueueService {
                 deadLetterRoutingKey: ConsumerQueueService.notiRoutingKeyDLX
             });
 
+
+            // TTL Handling
             const ttl = 5000; //5s
             setTimeout(() => {
                 channel.consume(ConsumerQueueService.notiQueue, (msg) => {
-                    console.log(`SEND notification successfully: ${msg?.content?.toString() ?? ''}`);
-                    channel.ack(msg);
+                    try {
+                        // Mock Logic error handling
+                        const testNumber = Math.random();
+                        console.log("Test number: " + testNumber);
+                        if (testNumber < 0.8) {
+                            throw new Error('Send notification failed: HOT FIX');
+                        }
+
+                        console.log(`SEND notification successfully: ${msg?.content?.toString() ?? ''}`);
+                        channel.ack(msg);
+                    } catch (error) {
+                        console.error("Send normal notification failed: " + error.message);
+                        channel.nack(msg, false, false);
+                    }
                 })
             }, ttl);
+
+
+
         } catch (error) {
             console.error("Error consumer to queue normal: ", error.message);
         }
